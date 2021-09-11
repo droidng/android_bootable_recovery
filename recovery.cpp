@@ -66,8 +66,8 @@
 #include "recovery_utils/roots.h"
 #include "volclient.h"
 
-using android::volmgr::VolumeManager;
 using android::volmgr::VolumeInfo;
+using android::volmgr::VolumeManager;
 
 static constexpr const char* COMMAND_FILE = "/cache/recovery/command";
 static constexpr const char* LAST_KMSG_FILE = "/cache/recovery/last_kmsg";
@@ -176,25 +176,18 @@ static bool yes_no(Device* device, const char* question1, const char* question2)
 }
 
 bool ask_to_continue_unverified(Device* device) {
-  if (get_build_type() == "user") {
-    return false;
-  } else {
-    device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
-    return yes_no(device, "Signature verification failed", "Install anyway?");
-  }
+  device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+  return yes_no(device, "Signature verification failed", "Install anyway?");
 }
 
 bool ask_to_continue_downgrade(Device* device) {
-  if (get_build_type() == "user") {
-    return false;
-  } else {
-    device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
-    return yes_no(device, "This package will downgrade your system", "Install anyway?");
-  }
+  device->GetUI()->SetProgressType(RecoveryUI::EMPTY);
+  return yes_no(device, "This package will downgrade your system", "Install anyway?");
 }
 
 static bool ask_to_wipe_data(Device* device) {
-  std::vector<std::string> headers{ "Format user data?", "This includes internal storage.", "THIS CANNOT BE UNDONE!" };
+  std::vector<std::string> headers{ "Format user data?", "This includes internal storage.",
+                                    "THIS CANNOT BE UNDONE!" };
   std::vector<std::string> items{ " Cancel", " Format data" };
 
   size_t chosen_item = device->GetUI()->ShowMenu(
@@ -204,7 +197,7 @@ static bool ask_to_wipe_data(Device* device) {
   return (chosen_item == 1);
 }
 
-static InstallResult apply_update_menu(Device* device, Device::BuiltinAction* reboot_action){
+static InstallResult apply_update_menu(Device* device, Device::BuiltinAction* reboot_action) {
   RecoveryUI* ui = device->GetUI();
   std::vector<std::string> headers{ "Apply update" };
   std::vector<std::string> items;
@@ -228,9 +221,9 @@ static InstallResult apply_update_menu(Device* device, Device::BuiltinAction* re
     }
 
     int chosen = ui->ShowMenu(
-      headers, items, 0, false,
-      std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2),
-      true /* refreshable */);
+        headers, items, 0, false,
+        std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2),
+        true /* refreshable */);
     if (chosen == Device::kRefresh) {
       continue;
     }
@@ -273,7 +266,7 @@ static InstallResult prompt_and_wipe_data(Device* device) {
       return INSTALL_KEY_INTERRUPTED;
     }
     if (chosen_item == Device::kGoBack) {
-      return INSTALL_NONE;     // Go back, show menu
+      return INSTALL_NONE;  // Go back, show menu
     }
     if (chosen_item == 0) {
       return INSTALL_SUCCESS;  // Just reboot, no wipe; not a failure, user asked for it
@@ -461,7 +454,7 @@ static Device::BuiltinAction PromptAndWait(Device* device, InstallResult status)
     }
     ui->SetProgressType(RecoveryUI::EMPTY);
 
-change_menu:
+  change_menu:
     size_t chosen_item = ui->ShowMenu(
         device->GetMenuHeaders(), device->GetMenuItems(), 0, false,
         std::bind(&Device::HandleMenuKey, device, std::placeholders::_1, std::placeholders::_2));
@@ -825,8 +818,8 @@ Device::BuiltinAction start_recovery(Device* device, const std::vector<std::stri
   std::string ver_date = ver_date_match.str(1);  // Empty if no match.
 
   std::vector<std::string> title_lines = {
-    "Version " + android::base::GetProperty("ro.lineage.build.version", "(unknown)") +
-        " (" + ver_date + ")",
+    "Version " + android::base::GetProperty("ro.lineage.build.version", "(unknown)") + " (" +
+        ver_date + ")",
   };
   if (android::base::GetBoolProperty("ro.build.ab_update", false)) {
     std::string slot = android::base::GetProperty("ro.boot.slot_suffix", "");
