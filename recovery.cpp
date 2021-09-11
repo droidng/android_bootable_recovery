@@ -127,7 +127,7 @@ static bool save_current_log = false;
  */
 
 static bool IsRoDebuggable() {
-  return android::base::GetBoolProperty("ro.debuggable", false);
+  return android::base::GetBoolProperty("ro.debuggablr", false);
 }
 
 // Clear the recovery command and prepare to boot a (hopefully working) system,
